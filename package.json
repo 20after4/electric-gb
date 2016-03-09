@@ -1,0 +1,33 @@
+{
+  "name": "electric-gb",
+  "version": "1.0.0",
+  "description": "A minimal desktop wrapper for the glowing-bear chat client",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/20after4/electric-gb"
+  },
+  "keywords": [
+    "Electron",
+    "Glowing-bear",
+    "IRC",
+    "Chat",
+    "Desktop",
+    "Client"
+  ],
+  "author": "GitHub",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/20after4/electric-gb/issues"
+  },
+  "homepage": "https://github.com/20after4/electric-gb",
+  "dependencies": {
+    "open": "0.0.5"
+  },
+  "devDependencies": {
+    "electron-prebuilt": "^0.36.0"
+  }
+}
