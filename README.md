@@ -20,7 +20,7 @@ To clone and run this repository you'll need [Git](https://git-scm.com) and [Nod
 # Clone this repository
 git clone https://github.com/20after4/electric-gb
 # Go into the repository
-cd 20after4/electric-gb
+cd electric-gb
 # Install dependencies and run the app
 npm install && npm start
 ```
