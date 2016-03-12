@@ -1,39 +1,126 @@
 'use strict';
 
-const electron = require('electron');
-// Module to control application life.
-const app = electron.app;
-// Module to create native browser window.
+const OpenLink      = require("open");
+
+const electron      = require('electron');
+const nativeImage   = electron.nativeImage;
+const app           = electron.app;
 const BrowserWindow = electron.BrowserWindow;
+const Menu          = electron.Menu;
+const Tray          = electron.Tray;
+const ui            = require('./ui');
 
-const OpenLink = require("open");
-
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+var devToolsOpen = false;
+
+
+
+/* [
+  {
+    label: 'Edit',
+    submenu: [
+      {
+        label: 'Undo',
+        accelerator: 'CmdOrCtrl+Z',
+        role: 'undo'
+      }
+    ]
+  },
+  {
+    label: 'Tools',
+    submenu: [
+      {
+        label: 'Open',
+        accelerator: 'CmdOrCtrl+O',
+        click: function() {
+          require('electron').dialog.showOpenDialog({ properties: [ 'openFile', 'openDirectory', 'multiSelections' ]});
+        }
+      },
+      {
+        label: 'Reload',
+        accelerator: 'CmdOrCtrl+R',
+        click: function(item, focusedWindow) {
+          if (focusedWindow)
+            focusedWindow.reload();
+        }
+      },
+      {
+        label: 'Toggle Full Screen',
+        accelerator: (function() {
+          if (process.platform == 'darwin')
+            return 'Ctrl+Command+F';
+          else
+            return 'F11';
+        })(),
+        click: function(item, focusedWindow) {
+          if (focusedWindow)
+            focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
+        }
+      },
+      {
+        label: 'Toggle DevTools',
+        accelerator: 'F12',
+        click: function(item, focusedWindow) {
+          if (focusedWindow)
+            focusedWindow.toggleDevTools();
+        }
+      }
+    ]
+  }
+];*/
+
+var browser = null;
+var appIcon = null;
 
 function createWindow () {
-  // Create the browser window.
+  function showMainWindow(event, bounds){
+    mainWindow.show();
+    mainWindow.restore();
+    mainWindow.focusOnWebView();
+  }
 
-  // In the main process.
+
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    icon: __dirname + '/glowing-bear.png',
+    icon: __dirname + '/electric-glowing-bear.png',
     title: 'Electric Glowing Bear',
     webPreferences: {
       nodeIntegration: false
     }
   });
+  mainWindow.setProgressBar(-1)
+  var menu = Menu.buildFromTemplate(ui.mainMenu);
+  Menu.setApplicationMenu(menu);
+
+  appIcon = new Tray(__dirname + '/images/tray.png');
+  var contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Show',
+      click: showMainWindow
+    },
+
+  ]);
+  appIcon.setToolTip('Electric Glowing Bear.');
+  appIcon.setContextMenu(contextMenu);
+  appIcon.on('click', showMainWindow);
+
   // and load the index.html of the app.
   //mainWindow.loadURL('file://' + __dirname + '/index.html');
-  mainWindow.loadURL('https://chat.buffers.us');
-  // Open the DevTools.
-  //mainWindow.webContents.openDevTools();
+  mainWindow.loadURL('file://'+__dirname + '/glowing-bear/index.html');
 
-  mainWindow.webContents.on('new-window', function(event, url){
+  browser = mainWindow.webContents;
+
+  browser.on('new-window', function(event, url){
     event.preventDefault();
     OpenLink(url);
+    mainWindow.focusOnWebView()
+  });
+
+  browser.on('page-favicon-updated', function(event, favicons) {
+    console.log(favicons);
+    var data = favicons[0];
+    var img = nativeImage.createFromDataURL(data);
+    appIcon.setImage(img);
+    //mainWindow.setImage(img);
   });
 
   // Emitted when the window is closed.

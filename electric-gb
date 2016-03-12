@@ -1,0 +1,5 @@
+#!/bin/bash
+APP_DIR=`dirname $0`
+cd $APP_DIR
+APP_DIR=`pwd`
+dist/electron $APP_DIR/main.js
