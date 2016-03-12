@@ -1,1 +1,4 @@
 node_modules
+*.sublime-workspace
+*.sublime-project
+dist

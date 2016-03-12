@@ -1,0 +1,3 @@
+[submodule "glowing-bear"]
+	path = glowing-bear
+	url = git@github.com:20after4/glowing-bear.git
