@@ -5,6 +5,9 @@ This doesn't do much except launch glowing-bear in it's own window.
 
 ## Tech
 * [electron](https://github.com/atom/electron)
+* [React](https://facebook.github.io/react/)
+ * [electron-browser](https://github.com/pfraze/electron-browser)
+* [Glowing-Bear](https://github.com/glowing-bear/glowing-bear)
 
 ## Why
 
