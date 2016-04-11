@@ -1,4 +1,5 @@
 module.exports = {};
+var ipc = require('ipc');
 
 module.exports.mainMenu = [
   {
@@ -8,6 +9,14 @@ module.exports.mainMenu = [
         label: 'Undo',
         accelerator: 'CmdOrCtrl+Z',
         role: 'undo'
+      },
+      {
+        label: 'Find',
+        accelerator: 'CmdOrCtrl+F',
+        role: 'find',
+        click: function(item, focusedWindow) {
+          focusedWindow.webContents.executeJavaScript('window.find("test", 0, 0, true, 0, 0, true)');
+        }
       }
     ]
   },

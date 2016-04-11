@@ -9,85 +9,34 @@ const BrowserWindow = electron.BrowserWindow;
 const Menu          = electron.Menu;
 const Tray          = electron.Tray;
 const ui            = require('./ui');
-
+const path          = require('path');
 let mainWindow;
 var devToolsOpen = false;
-
-
-
-/* [
-  {
-    label: 'Edit',
-    submenu: [
-      {
-        label: 'Undo',
-        accelerator: 'CmdOrCtrl+Z',
-        role: 'undo'
-      }
-    ]
-  },
-  {
-    label: 'Tools',
-    submenu: [
-      {
-        label: 'Open',
-        accelerator: 'CmdOrCtrl+O',
-        click: function() {
-          require('electron').dialog.showOpenDialog({ properties: [ 'openFile', 'openDirectory', 'multiSelections' ]});
-        }
-      },
-      {
-        label: 'Reload',
-        accelerator: 'CmdOrCtrl+R',
-        click: function(item, focusedWindow) {
-          if (focusedWindow)
-            focusedWindow.reload();
-        }
-      },
-      {
-        label: 'Toggle Full Screen',
-        accelerator: (function() {
-          if (process.platform == 'darwin')
-            return 'Ctrl+Command+F';
-          else
-            return 'F11';
-        })(),
-        click: function(item, focusedWindow) {
-          if (focusedWindow)
-            focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
-        }
-      },
-      {
-        label: 'Toggle DevTools',
-        accelerator: 'F12',
-        click: function(item, focusedWindow) {
-          if (focusedWindow)
-            focusedWindow.toggleDevTools();
-        }
-      }
-    ]
-  }
-];*/
-
 var browser = null;
 var appIcon = null;
 
-function createWindow () {
-  function showMainWindow(event, bounds){
-    mainWindow.show();
-    mainWindow.restore();
-    mainWindow.focusOnWebView();
+function activateMainWindow(commandLine, cwd) {
+  // If a second instance is launched, focus singleton window
+  if (!mainWindow) {
+    return;
   }
+  if (mainWindow.isMinimized()) {
+    mainWindow.restore();
+  }
+  mainWindow.show();
+  mainWindow.focus();
+  mainWindow.focusOnWebView();
+}
 
-
+function createWindow () {
   mainWindow = new BrowserWindow({
     icon: __dirname + '/electric-glowing-bear.png',
     title: 'Electric Glowing Bear',
-    webPreferences: {
-      nodeIntegration: false
-    }
+    webPreferences: {    },
+    frame: true
   });
-  mainWindow.setProgressBar(-1)
+//      preload: 'file://'+ __dirname + '/preload.js'
+  mainWindow.setProgressBar(-1);
   var menu = Menu.buildFromTemplate(ui.mainMenu);
   Menu.setApplicationMenu(menu);
 
@@ -95,18 +44,18 @@ function createWindow () {
   var contextMenu = Menu.buildFromTemplate([
     {
       label: 'Show',
-      click: showMainWindow
+      click: activateMainWindow
     },
 
   ]);
   appIcon.setToolTip('Electric Glowing Bear.');
   appIcon.setContextMenu(contextMenu);
-  appIcon.on('click', showMainWindow);
+  appIcon.on('click', activateMainWindow);
 
   // and load the index.html of the app.
   //mainWindow.loadURL('file://' + __dirname + '/index.html');
-  mainWindow.loadURL('file://'+__dirname + '/glowing-bear/index.html');
-
+  //mainWindow.loadURL('file://'+__dirname + '/glowing-bear/index.html');
+  mainWindow.loadURL('file://' + path.join(__dirname, '/browser/browser.html'))
   browser = mainWindow.webContents;
 
   browser.on('new-window', function(event, url){
@@ -123,6 +72,7 @@ function createWindow () {
     //mainWindow.setImage(img);
   });
 
+
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {
     // Dereference the window object, usually you would store windows
@@ -134,18 +84,6 @@ function createWindow () {
   mainWindow.on('focus', function() {
     mainWindow.focusOnWebView();
   })
-}
-
-function activateMainWindow(commandLine, cwd) {
-  // If a second instance is launched, focus singleton window
-  if (!mainWindow) {
-    return;
-  }
-  if (mainWindow.isMinimized()) {
-    mainWindow.restore();
-  }
-  mainWindow.show();
-  mainWindow.focusOnWebView()
 }
 
 if (app.makeSingleInstance(activateMainWindow)) {
