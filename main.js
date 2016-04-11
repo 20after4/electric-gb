@@ -33,7 +33,7 @@ function createWindow () {
     icon: __dirname + '/electric-glowing-bear.png',
     title: 'Electric Glowing Bear',
     webPreferences: {    },
-    frame: true
+    frame: false
   });
 //      preload: 'file://'+ __dirname + '/preload.js'
   mainWindow.setProgressBar(-1);
